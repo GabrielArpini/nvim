@@ -38,12 +38,41 @@ return {
   {
     "echasnovski/mini.nvim",
     config = function()
-      require("mini.surround").setup()   -- sa/sd/sr to add/delete/replace surrounds
-      require("mini.pairs").setup()      -- auto-close brackets/quotes
-      require("mini.comment").setup()    -- gcc to comment line, gc in visual
+      require("mini.surround").setup()
+      require("mini.pairs").setup()
+      require("mini.comment").setup()
       require("mini.files").setup()
-
       vim.keymap.set("n", "<leader>e", function() require("mini.files").open() end, { desc = "File explorer" })
+
+      local starter = require("mini.starter")
+      starter.setup({
+        header = function()
+          local hour = tonumber(vim.fn.strftime("%H"))
+          local greeting
+          if     hour <  6 then greeting = "still up."
+          elseif hour < 12 then greeting = "morning."
+          elseif hour < 18 then greeting = "afternoon."
+          else                   greeting = "evening."
+          end
+          return "nvim\n\n" .. greeting
+        end,
+        items = {
+          starter.sections.recent_files(7, true),
+        },
+        content_hooks = {
+          starter.gen_hook.adding_bullet("  › ", false),
+          starter.gen_hook.aligning("center", "center"),
+        },
+        footer = "",
+      })
+
+      vim.api.nvim_set_hl(0, "MiniStarterHeader",  { fg = "#d4a85a", bold = true })
+      vim.api.nvim_set_hl(0, "MiniStarterItem",    { fg = "#5a4e38" })
+      vim.api.nvim_set_hl(0, "MiniStarterCurrent", { fg = "#c4b48a" })
+      vim.api.nvim_set_hl(0, "MiniStarterBullet",  { fg = "#2a2620" })
+      vim.api.nvim_set_hl(0, "MiniStarterSection", { fg = "#1e4040" })
+      vim.api.nvim_set_hl(0, "MiniStarterFooter",  { fg = "#1e1a12" })
+      vim.api.nvim_set_hl(0, "MiniStarterQuery",   { fg = "#d4a85a" })
     end,
   },
 }
