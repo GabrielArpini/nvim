@@ -6,7 +6,7 @@ return {
     dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
     config = function()
       require("mason-lspconfig").setup({
-        ensure_installed = { "lua_ls", "pyright", "ts_ls", "gopls" },
+        ensure_installed = { "lua_ls", "pyright", "ts_ls", "gopls", "clangd" },
         automatic_installation = true,
       })
 
@@ -40,8 +40,21 @@ return {
         },
       })
 
+      vim.lsp.config("clangd", {
+        cmd = {
+          "clangd",
+          "--background-index",
+          "--clang-tidy",
+          "--header-insertion=iwyu",
+          "--completion-style=detailed",
+          "--fallback-style=llvm",
+        },
+        filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
+        root_markers = { ".clangd", "compile_commands.json", "CMakeLists.txt", ".git" },
+      })
+
       -- Enable servers (mason-lspconfig + nvim-lspconfig provide the cmd/filetypes)
-      vim.lsp.enable({ "lua_ls", "pyright", "ts_ls", "gopls" })
+      vim.lsp.enable({ "lua_ls", "pyright", "ts_ls", "gopls", "clangd" })
     end,
   },
 }
